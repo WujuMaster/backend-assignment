@@ -16,11 +16,23 @@ class DocxExtractor:
         self.output_dir = output_dir
 
     def extract_images(self, filename: str, img_dir: str):
+        """Extract images from the docx file
+        Args:
+            filename (str): Name of the docx file
+            img_dir (str): Directory to save the images
+        """
         docx2txt.process(path.join(self.data_dir, filename), img_dir)
 
     def extract_formatting_and_convert_uppercase(
         self, document: Union[DocumentObject, _Cell]
     ):
+        """Extract formatting and convert text to uppercase
+        Args:
+            document (Union[DocumentObject, _Cell]): Document or Cell object
+
+        Returns:
+            list: List of paragraphs with formatting information
+        """
         paragraphs = []
         for para in document.paragraphs:
             if not para.text or para.text.isspace():
@@ -36,7 +48,6 @@ class DocxExtractor:
                         "color": font.color.rgb if font.color else None,
                         "bold": font.bold,
                         "italic": font.italic,
-                        "underline": font.underline,
                     }
                 )
                 run.text = run.text.upper()
@@ -53,31 +64,26 @@ class DocxExtractor:
         return paragraphs
 
     def extract_convert_export(self, filename: str):
+        """Main method to extract, convert and export the docx file"""
         img_dir = prepare_output_dir(filename, self.output_dir)
 
+        # Extract images
         self.extract_images(filename, img_dir)
 
         document = Document(path.join(self.data_dir, filename))
         paragraphs = []
 
+        # Extract formatting and convert to uppercase
         paragraphs.extend(self.extract_formatting_and_convert_uppercase(document))
 
-        with open(
-            path.join(
-                self.output_dir,
-                filename.split(".")[0],
-                filename.split(".")[0] + ".json",
-            ),
-            "w",
-        ) as f:
+        filename = filename.split(".")[0]
+        # Export the extracted formatting data
+        with open(path.join(self.output_dir, filename, f"{filename}.json"), "w") as f:
             json.dump(paragraphs, f, indent=2)
 
+        # Export the converted docx file
         document.save(
-            path.join(
-                self.output_dir,
-                filename.split(".")[0],
-                filename.split(".")[0] + "_uppercase.docx",
-            )
+            path.join(self.output_dir, filename, f"{filename}_uppercase.docx")
         )
 
         return paragraphs
