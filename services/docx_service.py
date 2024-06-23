@@ -1,5 +1,5 @@
 import json
-from os import makedirs, path
+from os import path
 from typing import Union
 
 import docx2txt
@@ -7,20 +7,15 @@ from docx import Document
 from docx.document import Document as DocumentObject
 from docx.table import _Cell
 
+from utils.helper import prepare_output_dir
+
 
 class DocxExtractor:
     def __init__(self, data_dir: str, output_dir: str):
         self.data_dir = data_dir
         self.output_dir = output_dir
 
-    def extract_images(self, filename: str):
-        img_dir = path.join(
-            self.output_dir,
-            filename.split(".")[0],
-            "images",
-        )
-        if not path.exists(img_dir):
-            makedirs(img_dir)
+    def extract_images(self, filename: str, img_dir: str):
         docx2txt.process(path.join(self.data_dir, filename), img_dir)
 
     def extract_formatting_and_convert_uppercase(
@@ -58,7 +53,9 @@ class DocxExtractor:
         return paragraphs
 
     def extract_convert_export(self, filename: str):
-        self.extract_images(filename)
+        img_dir = prepare_output_dir(filename, self.output_dir)
+
+        self.extract_images(filename, img_dir)
 
         document = Document(path.join(self.data_dir, filename))
         paragraphs = []

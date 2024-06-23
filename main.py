@@ -1,3 +1,4 @@
+import logging
 import re
 from os import listdir, makedirs, path
 
@@ -5,6 +6,13 @@ from services import DocxExtractor, PDFExtractor
 
 DATA_DIR = path.join(path.dirname(path.abspath(__file__)), "data")
 OUTPUT_DIR = path.join(path.dirname(path.abspath(__file__)), "output")
+
+logging.basicConfig(
+    format="%(levelname)s %(asctime)s - PID %(process)d - %(message)s",
+    datefmt="%d-%b-%y %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def main():
@@ -21,9 +29,10 @@ def main():
             continue
 
         if file.endswith(".pdf"):
-            print(f"Processing PDF file: {file}")
+            logger.info(f"Processing PDF file: {file}")
+            pdf_extractor.extract_convert_export(file)
         elif file.endswith(".docx"):
-            print(f"Processing DOCX file: {file}")
+            logger.info(f"Processing DOCX file: {file}")
             docx_extractor.extract_convert_export(file)
         else:
             continue
