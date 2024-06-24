@@ -1,0 +1,15 @@
+# Ignore everything
+*
+
+# Allow main files
+!data/docx_mock_file.docx
+!data/pdf_mock_file.pdf
+!data/Networking.pptx
+!**/*.py
+!requirements.txt
+
+# Ignore some python environment-related directories
+venv/**/*
+.venv/
+env/
+__pycache__/

@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  script-1:
+    container_name: script-1
+    image: sbach2411/backend-assignment:latest
+    build: .
+    command: python3 script-1.py
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+
+  script-2:
+    container_name: script-2
+    image: sbach2411/backend-assignment:latest
+    build: .
+    command: python3 script-2.py
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
