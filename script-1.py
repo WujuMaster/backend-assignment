@@ -8,7 +8,7 @@ DATA_DIR = path.join(path.dirname(path.abspath(__file__)), "data")
 OUTPUT_DIR = path.join(path.dirname(path.abspath(__file__)), "output")
 
 logging.basicConfig(
-    format="%(levelname)s %(asctime)s - PID %(process)d - %(message)s",
+    format="%(levelname)s %(asctime)s - %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
@@ -36,6 +36,8 @@ def main():
             docx_extractor.extract_convert_export(file)
         else:
             continue
+
+    logger.info(f"All done! Results have been saved to {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":
