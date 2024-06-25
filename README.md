@@ -1,4 +1,14 @@
-# Backend Assignment - Round 1
+# Backend Assignment
+
+## Table of Contents
+
+- [Problem Statement](#problem-statement)
+- [Solution Summary](#solution-summary)
+- [Directory Structure](#directory-structure)
+- [Instructions](#instructions)
+  - [Run natively](#run-natively)
+  - [Run with Docker](#run-with-docker)
+  - [Run with Docker Compose](#run-with-docker-compose)
 
 ## Problem Statement
 
@@ -16,6 +26,19 @@
 3. Use containers to run the scripts.
 
 4. Submit to Github and provide a link to the repository.
+
+## Solution Summary
+
+- The solution consists of two scripts:
+  - `script-1.py`:
+    - Create a folder (in the `output` folder) whose name is same as each input file to save extraction result.
+    - Extracts paragraphs' text formattings (font, size, color,...) and save to a json file in the extraction folder.
+    - Extracts text/images from the given PDF/DOCX files (in the `data` folder) and converts paragraphs to uppercase.
+    - Save extracted images to the `images` folder inside the extraction folder. Save the uppercased text to a new PDF/DOCX file in the extraction folder.
+  - `script-2.py`:
+    - Extracts text/images from PPTX file and translates text from English to Vietnamese. Save the images to the extraction folder.
+    - Appends the translated text under the original text back in the original PPTX file.
+- The scripts are written in Python and containerized using Docker.
 
 ## Directory Structure
 
@@ -61,7 +84,7 @@ backend-assignment/
     python ${script_name}.py
     ```
 
-### Run using Docker
+### Run with Docker
 
 1. Build the Docker image [*Optional*]:
 
@@ -79,8 +102,14 @@ backend-assignment/
     sbach2411/backend-assignment:latest python3 ${script_name}.py
     ```
 
-3. **OR** to run the scripts using Docker Compose (modify the `docker-compose.yml` file if needed):
+### Run with Docker Compose
 
-    ```bash
-    docker-compose up -d --build
-    ```
+```bash
+# Pull image from Docker Hub and run the container
+docker-compose up -d
+
+# OR build the image yourself and run the container
+docker-compose up -d --build
+```
+
+**Note**: The current configuration mounts the `data` and `output` folders (in the current working directory) to the container. Modify if needed.
