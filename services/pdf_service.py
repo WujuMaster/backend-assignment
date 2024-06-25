@@ -4,8 +4,9 @@ from os import path
 from typing import Dict
 
 import fitz
-from fitz import find_tables, sRGB_to_rgb
+from fitz import sRGB_to_rgb
 from fitz.utils import (
+    draw_line,
     draw_rect,
     get_image_info,
     get_image_rects,
@@ -132,6 +133,26 @@ class PDFExtractor:
                 new_doc, width=page.rect.width, height=page.rect.height
             )
 
+            # Draw tables layout
+            drawing_commands = page.get_drawings()
+            for command in drawing_commands:
+                if command["items"][0][0] == "l":
+                    draw_line(
+                        new_page,
+                        p1=command["items"][0][1],
+                        p2=command["items"][0][2],
+                        width=command["width"],
+                        color=command["color"],
+                    )
+                elif command["items"][0][0] == "re":
+                    draw_rect(
+                        new_page,
+                        rect=command["rect"],
+                        color=command["color"],
+                        fill=command["fill"],
+                        width=command["width"],
+                    )
+
             # Extract formatting info
             span_list = self.extract_spans_formatting(page)
             formatting_info.extend(span_list)
@@ -151,15 +172,6 @@ class PDFExtractor:
                     rect=get_image_rects(page, image["xref"])[0],
                     stream=image["image"]["image"],
                 )
-
-            # Insert table lines
-            tabs = find_tables(page)
-            for tab in tabs:
-                for cell in tab.cells:
-                    if not cell:
-                        continue
-                    draw_rect(new_page, cell)
-                draw_rect(new_page, tab.bbox)
 
         filename = filename.split(".")[0]
         # Export the extracted formatting data
